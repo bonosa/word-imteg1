@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Unsplash Word Add-in (No Pop-ups)</title>
+  <!-- Office.js library -->
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <!-- Our main script -->
+  <script src="taskpane.js" defer></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 10px;
+      max-width: 300px;
+    }
+    #gallery img {
+      margin: 5px;
+      width: 100px;
+      cursor: pointer;
+    }
+    #gallery p {
+      font-size: 0.8em;
+      margin: 2px 0;
+    }
+    .search-area {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Unsplash (No Pop-ups)</h1>
+  <div class="search-area">
+    <input type="text" id="searchQuery" placeholder="Search images (e.g. mountains)" />
+    <button id="searchButton">Search</button>
+  </div>
+  <div id="gallery"></div>
+</body>
+</html>
