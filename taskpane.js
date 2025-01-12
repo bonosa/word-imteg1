@@ -1,8 +1,8 @@
 /* taskpane.js */
 
 // Replace with your actual Unsplash Access Key
-const UNSPLASH_ACCESS_KEY = "YOUR_UNSPLASH_ACCESS_KEY";
-
+const UNSPLASH_ACCESS_KEY = "n3iOXASl_P5newMXNlMH8ny_ZbLXAdnHPuMum5oq6ls";
+//
 Office.onReady(() => {
   // Once Office.js is ready, attach event listeners
   document.getElementById("searchButton").addEventListener("click", onSearch);
@@ -23,6 +23,7 @@ async function onSearch() {
  * Call Unsplash API to get images for the given query
  */
 async function fetchImagesFromUnsplash(query) {
+  const UNSPLASH_ACCESS_KEY="n3iOXASl_P5newMXNlMH8ny_ZbLXAdnHPuMum5oq6ls"
   const url = `https://api.unsplash.com/search/photos?client_id=${UNSPLASH_ACCESS_KEY}&query=${encodeURIComponent(query)}`;
   try {
     const response = await fetch(url);

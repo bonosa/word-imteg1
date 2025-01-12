@@ -28,7 +28,7 @@
   <!-- URL to your task pane page -->
   <DefaultSettings>
     <!-- IMPORTANT: Update URL to your actual HTTPS hosting location -->
-    <SourceLocation DefaultValue="https://bonosa.github.io/word-integm1/taskpane.html" />
+    <SourceLocation DefaultValue="https://bonosa.github.io/word-imteg1/taskpane.html" />
   </DefaultSettings>
 
   <!-- The permission level needed by this add-in -->
