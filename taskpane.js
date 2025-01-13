@@ -1,57 +1,54 @@
 /* taskpane.js */
-
-// Replace with your actual Unsplash Access Key
 const UNSPLASH_ACCESS_KEY = "n3iOXASl_P5newMXNlMH8ny_ZbLXAdnHPuMum5oq6ls";
-//
+
+let insertedImagesMap = {};
+
 Office.onReady(() => {
-  // Once Office.js is ready, attach event listeners
-  document.getElementById("searchButton").addEventListener("click", onSearch);
+  const searchButton = document.getElementById("searchButton");
+  searchButton.addEventListener("click", onSearch);
 });
 
 /**
- * Handler for the search button
+ * When user clicks "Search", fetch 10 new images and replace the old gallery
  */
 async function onSearch() {
   const query = document.getElementById("searchQuery").value.trim();
   if (!query) return;
 
-  const results = await fetchImagesFromUnsplash(query);
+  document.getElementById("gallery").innerHTML = "";
+
+  const results = await fetchImagesFromUnsplash(query, 10); // Updated to fetch 10 images
   displayImages(results);
 }
 
 /**
- * Call Unsplash API to get images for the given query
+ * Fetch images from Unsplash
  */
-async function fetchImagesFromUnsplash(query) {
-  const UNSPLASH_ACCESS_KEY="n3iOXASl_P5newMXNlMH8ny_ZbLXAdnHPuMum5oq6ls"
-  const url = `https://api.unsplash.com/search/photos?client_id=${UNSPLASH_ACCESS_KEY}&query=${encodeURIComponent(query)}`;
+async function fetchImagesFromUnsplash(query, count) {
+  const url = `https://api.unsplash.com/search/photos?client_id=${UNSPLASH_ACCESS_KEY}&query=${encodeURIComponent(query)}&per_page=${count}`;
   try {
     const response = await fetch(url);
     const data = await response.json();
     return data.results || [];
   } catch (err) {
-    console.error("Error fetching from Unsplash:", err);
+    console.error("Error fetching Unsplash:", err);
     return [];
   }
 }
 
 /**
- * Display the images in our gallery. Each image is clickable.
+ * Display the fetched images in the gallery
  */
 function displayImages(images) {
   const gallery = document.getElementById("gallery");
-  gallery.innerHTML = "";
-
   images.forEach((img) => {
     const container = document.createElement("div");
 
-    // Create an <img> for the thumbnail
     const thumbnail = document.createElement("img");
     thumbnail.src = img.urls.thumb;
     thumbnail.title = `Photo by ${img.user.name} on Unsplash`;
-    thumbnail.addEventListener("click", () => insertImageIntoDoc(img.urls.full));
+    thumbnail.addEventListener("click", () => onImageClick(img.urls.full));
 
-    // Create a <p> for attribution
     const caption = document.createElement("p");
     caption.innerHTML = `Photo by ${img.user.name} on <a href="${img.links.html}" target="_blank">Unsplash</a>`;
 
@@ -62,25 +59,39 @@ function displayImages(images) {
 }
 
 /**
- * Insert the selected image into the Word document
+ * Set the clicked image as the background of the current page
  */
-async function insertImageIntoDoc(imageUrl) {
-  try {
-    const blob = await fetchImageBlob(imageUrl);
-    const base64Image = await blobToBase64(blob);
+async function onImageClick(fullUrl) {
+  await setBackgroundImage(fullUrl);
+}
 
+/**
+ * Set the background image for the page
+ */
+async function setBackgroundImage(imageUrl) {
+  try {
     await Word.run(async (context) => {
-      const docBody = context.document.body;
-      docBody.insertInlinePictureFromBase64(base64Image, Word.InsertLocation.end);
+      const sections = context.document.sections;
+      sections.load("items");
       await context.sync();
+
+      sections.items.forEach((section) => {
+        const background = section.getHeader("primary").paragraphs.getFirst();
+        background.insertInlinePictureFromBase64(
+          imageUrl,
+          Word.InsertLocation.replace
+        );
+        // Style the background image (e.g., behind text)
+        background.style = Word.StyleId.picture;
+      });
     });
   } catch (error) {
-    console.error("Error inserting image:", error);
+    console.error("Error setting background image:", error);
   }
 }
 
 /**
- * Fetch the image as a Blob
+ * Basic fetch -> blob
  */
 async function fetchImageBlob(url) {
   const response = await fetch(url);
@@ -88,13 +99,12 @@ async function fetchImageBlob(url) {
 }
 
 /**
- * Convert a Blob to a base64 string
+ * Convert blob to base64
  */
 function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onloadend = () => {
-      // DataURL -> we split after comma to get the base64 part
       const base64String = reader.result.split(",")[1];
       resolve(base64String);
     };

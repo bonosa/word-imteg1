@@ -2,37 +2,74 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Unsplash Word Add-in (No Pop-ups)</title>
+  <title>Unsplash Word Add-in (Enhanced)</title>
   <!-- Office.js library -->
   <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
-  <!-- Our main script -->
-  <script src="taskpane.js" defer></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 10px;
       max-width: 300px;
+      position: relative;
     }
+
+    .tooltip-info {
+      position: sticky;
+      top: 0;
+      background: #f1f1f1;
+      border: 1px solid #ccc;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+    .tooltip-info ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .tooltip-info li {
+      font-size: 0.9em;
+      margin: 3px 0;
+    }
+
+    .search-area {
+      margin-bottom: 10px;
+    }
+
     #gallery img {
       margin: 5px;
       width: 100px;
       cursor: pointer;
+      border: 2px solid transparent;
+      transition: border 0.2s ease;
+    }
+    #gallery img:hover {
+      border: 2px solid #0078d4;
     }
     #gallery p {
       font-size: 0.8em;
       margin: 2px 0;
     }
-    .search-area {
-      margin-bottom: 10px;
-    }
   </style>
 </head>
+
 <body>
-  <h1>Unsplash (No Pop-ups)</h1>
+  <h1>Unsplash (Enhanced)</h1>
+  <div class="tooltip-info">
+    <strong>How to Use:</strong>
+    <ul>
+      <li>Click "Search" to load 10 new images (replaces old images).</li>
+      <li>Click an image to set it as the <em>background</em> of the current page in Word.</li>
+    </ul>
+  </div>
+
   <div class="search-area">
     <input type="text" id="searchQuery" placeholder="Search images (e.g. mountains)" />
     <button id="searchButton">Search</button>
   </div>
+
   <div id="gallery"></div>
+
+  <!-- Our main JS code -->
+  <script src="taskpane.js" defer></script>
 </body>
 </html>

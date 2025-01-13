@@ -2,35 +2,22 @@
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:type="TaskPaneApp">
-  <!-- A unique ID for your add-in (any GUID) -->
   <Id>12345678-9abc-def0-1234-56789abcdef0</Id>
-
-  <!-- Version of your add-in -->
   <Version>1.0.0.0</Version>
-
-  <!-- Provider name (your name or company) -->
   <ProviderName>YourProviderName</ProviderName>
-
-  <!-- Default locale -->
   <DefaultLocale>en-US</DefaultLocale>
 
-  <!-- Title of your add-in -->
-  <DisplayName DefaultValue="Unsplash Word Add-in (No Pop-ups)" />
+  <DisplayName DefaultValue="Unsplash Word Add-in (Enhanced)" />
+  <Description DefaultValue="Insert and remove Unsplash images at the cursor with pinned tooltips." />
 
-  <!-- Description of your add-in -->
-  <Description DefaultValue="A simple Unsplash add-in for Word, with no pop-up logic." />
-
-  <!-- Where this add-in can run (Word = Document) -->
   <Hosts>
     <Host Name="Document" />
   </Hosts>
 
-  <!-- URL to your task pane page -->
   <DefaultSettings>
-    <!-- IMPORTANT: Update URL to your actual HTTPS hosting location -->
+    <!-- Replace with your actual HTTPS hosting URL -->
     <SourceLocation DefaultValue="https://bonosa.github.io/word-imteg1/taskpane.html" />
   </DefaultSettings>
 
-  <!-- The permission level needed by this add-in -->
   <Permissions>ReadWriteDocument</Permissions>
 </OfficeApp>
