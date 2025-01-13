@@ -68,25 +68,51 @@ async function onImageClick(fullUrl) {
 /**
  * Set the background image for the page
  */
+/**
+ * Set an image as the background underneath the text
+ */
 async function setBackgroundImage(imageUrl) {
   try {
     await Word.run(async (context) => {
-      const sections = context.document.sections;
-      sections.load("items");
-      await context.sync();
+      const body = context.document.body;
 
-      sections.items.forEach((section) => {
-        const background = section.getHeader("primary").paragraphs.getFirst();
-        background.insertInlinePictureFromBase64(
-          imageUrl,
-          Word.InsertLocation.replace
-        );
-        // Style the background image (e.g., behind text)
-        background.style = Word.StyleId.picture;
-      });
+      // Insert an inline picture at the start of the document
+      const inlinePicture = body.insertInlinePictureFromBase64(await fetchImageAsBase64(imageUrl), Word.InsertLocation.start);
+
+      // Adjust the picture properties to position it behind text
+      inlinePicture.parentContentControl.appearance = "None"; // Remove content control bounding box
+      inlinePicture.floating = true; // Enable floating to allow positioning
+      inlinePicture.position = {
+        horizontalAlignment: "center",
+        verticalAlignment: "top",
+      };
+      inlinePicture.zIndex = -1; // Ensure it is behind text
+
+      await context.sync();
+      console.log("Background image set successfully underneath the text.");
     });
   } catch (error) {
     console.error("Error setting background image:", error);
+  }
+}
+
+/**
+ * Fetch an image from URL and convert it to base64
+ */
+async function fetchImageAsBase64(imageUrl) {
+  try {
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result.split(",")[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error("Error fetching image as base64:", error);
+    throw error;
   }
 }
 
