@@ -68,51 +68,31 @@ async function onImageClick(fullUrl) {
 /**
  * Set the background image for the page
  */
-/**
- * Set an image as the background underneath the text
- */
 async function setBackgroundImage(imageUrl) {
   try {
+    const blob = await fetchImageBlob(imageUrl);
+    const base64Image = await blobToBase64(blob);
+
     await Word.run(async (context) => {
       const body = context.document.body;
 
-      // Insert an inline picture at the start of the document
-      const inlinePicture = body.insertInlinePictureFromBase64(await fetchImageAsBase64(imageUrl), Word.InsertLocation.start);
+      // Insert the image
+      const inlinePicture = body.insertInlinePictureFromBase64(
+        base64Image,
+        Word.InsertLocation.start
+      );
 
-      // Adjust the picture properties to position it behind text
-      inlinePicture.parentContentControl.appearance = "None"; // Remove content control bounding box
-      inlinePicture.floating = true; // Enable floating to allow positioning
-      inlinePicture.position = {
-        horizontalAlignment: "center",
-        verticalAlignment: "top",
-      };
-      inlinePicture.zIndex = -1; // Ensure it is behind text
+      // Change the image layout to be behind the text
+      inlinePicture.floatingFormat.horizontalPositionAlignment = Word.HorizontalAlignment.center;
+      inlinePicture.floatingFormat.verticalPositionAlignment = Word.VerticalAlignment.center;
+      inlinePicture.floatingFormat.wrapText = "behindText";
 
+      // Sync changes
       await context.sync();
-      console.log("Background image set successfully underneath the text.");
+      console.log("Background image set and editable text enabled.");
     });
   } catch (error) {
     console.error("Error setting background image:", error);
-  }
-}
-
-/**
- * Fetch an image from URL and convert it to base64
- */
-async function fetchImageAsBase64(imageUrl) {
-  try {
-    const response = await fetch(imageUrl);
-    const blob = await response.blob();
-
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result.split(",")[1]);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  } catch (error) {
-    console.error("Error fetching image as base64:", error);
-    throw error;
   }
 }
 
