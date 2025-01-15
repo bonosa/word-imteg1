@@ -86,10 +86,20 @@ async function setBackgroundImage(imageUrl) {
         Word.InsertLocation.start
       );
 
-      // Convert to floating image
-      inlinePicture.floatingFormat.wrapText = "behindText";
-      inlinePicture.floatingFormat.horizontalPositionAlignment = Word.Alignment.center;
-      inlinePicture.floatingFormat.verticalPositionAlignment = Word.VerticalAlignment.center;
+      // Debugging: Log if the floatingFormat is available
+      if (inlinePicture.floatingFormat) {
+        console.log("Floating format available. Setting properties...");
+
+        try {
+          inlinePicture.floatingFormat.wrapText = "behindText";
+          inlinePicture.floatingFormat.horizontalPositionAlignment = Word.Alignment.center;
+          inlinePicture.floatingFormat.verticalPositionAlignment = Word.VerticalAlignment.center;
+        } catch (error) {
+          console.error("Error setting floating format properties:", error);
+        }
+      } else {
+        console.error("Floating format not available.");
+      }
 
       // Sync changes
       await context.sync();
